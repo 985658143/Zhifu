@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {css href="_BS_/css/bootstrap.css" /}
+  {css href="_CSS_/index.css" /}
+  {css href="_CSS_/foot.css" /}
+  {css href="_CSS_/main.css" /}
+  {css href="_CSS_/head.css" /}
+  {css href="_CSS_/prodList.css" /}
+  {css href="_FONT_/font-awesome.css" /}
+  
+  {js href="_JS_/jquery.min.js" /}
+  {js href="_BS_/js/bootstrap.js" /}
+  <title>智付商城</title>
+  <link rel="icon" type="image/x-icon" href="_IMG_/money.png"/>
+
+</head>
+
+<body>
+<div id="common_head">
+  <div class="line1">
+    <div class="content">
+      <ul>
+        {empty name="Think.cookie.id"}
+        <li>
+          <span>
+            <a href="/index/Login/login">登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/register">注册</a>
+          </span>
+        </li>
+        {else /}
+        <li>
+          <span>
+            <a href="/index/User/userpage">用户中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/logout">退出登录</a>
+          </span>
+        </li>
+        {/empty}
+      </ul>
+    </div>
+  </div>
+  <div class="line2" id="nav-top">
+    <a href="/index/User/index"><img id="logo" src="_IMG_/logo.png" alt="logo"/></a>
+    <input type="text" value="" id="s1"/>
+    <input type="submit" value="搜 索" onclick="search()"/>
+    <span id="goto">
+			<a id="goto_order" href="/index/User/order">我的订单</a>
+			<a id="goto_cart" href="/index/User/spcart"><i class="fa fa-shopping-cart"></i>我的购物车</a>
+		</span>
+  </div>
+</div>
+<div class="page-container">
+  <div class="row">
+    <div class="z_menu">
+      <div class="fore1">
+        <div class="nav-title">个人中心</div>
+        <div class="nav-content"><a href="/index/User/userinfo">我的信息</a></div>
+        <div class="nav-content"><a href="/index/User/changepwd">修改密码</a></div>
+      </div>
+      <div class="fore2">
+        <div class="nav-title">订单中心</div>
+        <div class="nav-content"><a href="/index/User/order">我的订单</a></div>
+      </div>
+      <div class="fore4">
+        <div class="nav-title">关注中心</div>
+        <div class="nav-content"><a href="/index/User/collect">我的收藏</a></div>
+      </div>
+    </div>
+    <div class="">
+      <div class="z_content">
+        <h4 class="user-title">我的信息</h4>
+        <div class="atr">
+          <div class="u-pic">
+            <img id="用户头像" src="{$userData.avatar}" alt="">
+            <input type="hidden" value="{$userData.avatar}">
+            <div class="mask"></div>
+          </div>
+          <div class="info-m">
+            <div>
+              <b>用户名：{$userData.username}</b>
+            </div>
+          </div>
+        </div>
+        <div class="user-set">
+          <form data-toggle="validator" id="userform">
+            <input type="hidden" name="id" value="{$userData.id}">
+            <div class="form-group">
+              <b>修改头像：</b><input type="file" class="form-card" name="avatar" value="{$userData.avatar}">
+            </div>
+            <div class="form-group">
+              <b>用&nbsp;&nbsp;户&nbsp;&nbsp;名：</b>{$userData.username}
+            </div>
+            <div class="form-group">
+              <b>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：</b>
+              <select class="form-card" name="gender" id="gender">
+                <option value="unknown" {if $userData.gender=='unknown'}selected="selected"{/if}>保密</option>
+                <option value="boy" {if $userData.gender=='boy'}selected="selected"{/if}>男</option>
+                <option value="girl" {if $userData.gender=='girl'}selected="selected"{/if}>女</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <b>出生日期：</b><input type="date" class="form-card" name="birth" value="{$userData.birth}">
+            </div>
+            <div class="form-group">
+              <b>地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址：</b><input type="text" class="form-card" name="address" value="{$userData.address}">
+            </div>
+            <div class="form-group">
+              <b>手&nbsp;&nbsp;机&nbsp;&nbsp;号：</b><input type="text" class="form-card" name="phone" value="{$userData.phone}">
+            </div>
+            <div class="form-group">
+              <b>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱：</b><input type="text" class="form-card" name="email" value="{$userData.email}">
+            </div>
+            <div class="form-group">
+              <b>注册时间：</b>{$userData.regitime}
+            </div>
+            <div class="user-button">
+              <button type="submit" class="btn btn-default">提交</button>
+              <a href="/index/User/userpage">
+                <button type="button" class="btn btn-default">返回</button>
+              </a>
+            </div>
+            <div id="status"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class=""></div>
+<div id="common_foot">
+  <p>
+    Copyright © 2020-2021 智付商城 版权所有 保留一切权利
+  </p>
+</div>
+</body>
+<script>
+  
+  $("#userform").submit(function () {
+    console.log('表单被提交了');
+    let formData = new FormData(document.getElementById("userform"));
+    $.ajax({
+      url: "/index/User/doUpuser",
+      type: "post",
+      dataType: "json", //text, json, html
+      data: formData,
+      contentType: false,
+      processData: false,
+      beforeSend: function () {
+        console.log('我在请求发送之前会被执行');
+        $("#status").html("<i class='fa fa-spinner fa-spin'></i>");
+      },
+      success: function (response) {
+        $("#status").html(response.msg);
+        if (response.code) {
+          $("#status").html("<i class='fa fa-check'></i>" + response.msg);
+          setTimeout(function () {
+            window.location.href = "/index/User/userinfo"
+          }, response.wait * 1000);
+        } else {
+          //后端处理有错误
+          $("#status").html(response.msg);
+        }
+      },
+      error: function (e) {
+        console.log(e);
+        $("#status").html("<i class='fa fa-close'></i>" + response.msg);
+      },
+      complete: function () {
+        console.log('请求完成,无论成功与失败,我都会执行');
+        
+      }
+    });
+    return false; //禁用默认的表单提交跳转
+  });
+</script>
+<script>
+  function search() {
+    let content = document.getElementById("s1");
+    let value = content.value;
+    window.location = '{:url("Commodity/search")}' + '?value=' + value;
+  }
+</script>
+</html>

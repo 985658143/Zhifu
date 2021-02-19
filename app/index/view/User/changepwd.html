@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {css href="_BS_/css/bootstrap.css" /}
+  {css href="_CSS_/index.css" /}
+  {css href="_CSS_/foot.css" /}
+  {css href="_CSS_/main.css" /}
+  {css href="_CSS_/head.css" /}
+  {css href="_CSS_/prodList.css" /}
+  {css href="_FONT_/font-awesome.css" /}
+  
+  {js href="_JS_/jquery.min.js" /}
+  {js href="_BS_/js/bootstrap.js" /}
+  <title>智付商城</title>
+  <link rel="icon" type="image/x-icon" href="_IMG_/money.png"/>
+</head>
+
+<body>
+<div id="common_head">
+  <div class="line1">
+    <div class="content">
+      <ul>
+        {empty name="Think.cookie.id"}
+        <li>
+          <span>
+            <a href="/index/Login/login">登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/register">注册</a>
+          </span>
+        </li>
+        {else /}
+        <li>
+          <span>
+            <a href="/index/User/userpage">用户中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/logout">退出登录</a>
+          </span>
+        </li>
+        {/empty}
+      </ul>
+    </div>
+  </div>
+  <div class="line2" id="nav-top">
+    <a href="/index/User/index"><img id="logo" src="_IMG_/logo.png" alt="logo"/></a>
+    <input type="text" value="" id="s1"/>
+    <input type="submit" value="搜 索" onclick="search()"/>
+    <span id="goto">
+			<a id="goto_order" href="/index/User/order">我的订单</a>
+			<a id="goto_cart" href="/index/User/spcart"><i class="fa fa-shopping-cart"></i>我的购物车</a>
+		</span>
+  </div>
+</div>
+<div class="page-container">
+  <div class="row">
+    <div class="z_menu">
+      <div class="fore1">
+        <div class="nav-title">个人中心</div>
+        <div class="nav-content"><a href="/index/User/userinfo">我的信息</a></div>
+        <div class="nav-content"><a href="/index/User/changepwd">修改密码</a></div>
+      </div>
+      <div class="fore2">
+        <div class="nav-title">订单中心</div>
+        <div class="nav-content"><a href="/index/User/order">我的订单</a></div>
+      </div>
+      <div class="fore4">
+        <div class="nav-title">关注中心</div>
+        <div class="nav-content"><a href="/index/User/collect">我的收藏</a></div>
+      </div>
+    </div>
+    <div class="z_content">
+      <div class="top-content">
+        <h4 class="user-title">修改密码</h4>
+        <div class="user-set">
+          <form id="pwForm">
+            <div class="form-group">
+              <label for="oldpassword" class=" control-label">原密码</label>
+              <div class="">
+                <input type="password" class="form-control" name="oldpassword" id="oldpassword" placeholder="请输入登录密码">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class=" control-label">新密码</label>
+              <div class="">
+                <input type="password" class="form-control" name="password" id="password" placeholder="请输入登录密码">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="repassword" class=" control-label">确认密码</label>
+              <div class="">
+                <input type="password" class="form-control" name="repassword" id="repassword" placeholder="请确认登录密码">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="user-button">
+                <button type="submit" class="btn btn-default">修改</button>
+              </div>
+              <div id="status"></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="common_foot">
+  <p>
+    Copyright © 2020-2021 智付商城 版权所有 保留一切权利
+  </p>
+</div>
+</body>
+<script>
+  
+  $("#pwForm").submit(function () {
+    console.log('表单被提交了');
+    
+    let formData = new FormData(document.getElementById("pwForm"));
+    
+    $.ajax({
+      url: "/index/User/doChangepwd",
+      type: "post",
+      dataType: "json", //text, json, html
+      data: formData,
+      contentType: false,
+      processData: false,
+      beforeSend: function () {
+        console.log('我在请求发送之前会被执行');
+        $("#status").html("<i class='fa fa-spinner fa-spin'></i>");
+      },
+      success: function (response) {
+        $("#status").html(response.msg);
+        if (response.code) {
+          
+          setTimeout(function () {
+            window.location.href = "/index/User/userpage"
+          }, response.wait * 1000);
+          
+        } else {
+          //后端处理有错误
+        }
+      },
+      error: function (e) {
+        console.log(e);
+        $("#status").html("<i class='fa fa-close'></i>");
+      },
+      complete: function () {
+        console.log('请求完成,无论成功与失败,我都会执行');
+        
+      }
+    });
+    return false; //禁用默认的表单提交跳转
+  });
+
+</script>
+<script>
+  function search() {
+    let content = document.getElementById("s1");
+    let value = content.value;
+    window.location = '{:url("Commodity/search")}' + '?value=' + value;
+  }
+</script>
+</html>

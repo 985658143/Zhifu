@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {css href="_BS_/css/bootstrap.css" /}
+  {css href="_CSS_/index.css" /}
+  {css href="_CSS_/foot.css" /}
+  {css href="_CSS_/main.css" /}
+  {css href="_CSS_/head.css" /}
+  {css href="_CSS_/prodList.css" /}
+  {css href="_CSS_/swiper-bundle.css" /}
+  {css href="_FONT_/font-awesome.css" /}
+  
+  {js href="_JS_/jquery.min.js" /}
+  {js href="_BS_/js/bootstrap.js" /}
+  {js href="_JS_/swiper-bundle.js" /}
+  <title>智付商城</title>
+  <noscript>抱歉，你的浏览器不支持 JavaScript!</noscript>
+  
+  <link rel="icon" type="image/x-icon" href="_IMG_/money.png"/>
+
+
+</head>
+
+<body>
+<div id="common_head">
+  <div class="line1">
+    <div class="content">
+      <ul>
+        {empty name="Think.cookie.id"}
+        <li>
+          <span>
+            <a href="/index/Login/login">登录</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/register">注册</a>
+          </span>
+        </li>
+        {else /}
+        <li>
+          <span>
+            <a href="/index/User/userpage">用户中心</a>&nbsp;&nbsp;|&nbsp;&nbsp;
+            <a href="/index/User/logout">退出登录</a>
+          </span>
+        </li>
+        {/empty}
+      </ul>
+    </div>
+  </div>
+  <div class="line2" id="nav-top">
+    <a href="/index/User/index"><img id="logo" src="_IMG_/logo.png" alt="logo"/></a>
+    <input type="text" value="" id="s1"/>
+    <input type="submit" value="搜 索" onclick="search()"/>
+    <span id="goto">
+			<a id="goto_order" href="/index/User/order">我的订单</a>
+			<a id="goto_cart" href="/index/User/spcart"><i class="fa fa-shopping-cart"></i>我的购物车</a>
+		</span>
+  </div>
+</div>
+<div class="page-container">
+  <div class="row">
+    <div class="z_menu">
+      <div class="fore1">
+        <div class="nav-title">个人中心</div>
+        <div class="nav-content"><a href="/index/User/userinfo">我的信息</a></div>
+        <div class="nav-content"><a href="/index/User/changepwd">修改密码</a></div>
+      </div>
+      <div class="fore2">
+        <div class="nav-title">订单中心</div>
+        <div class="nav-content"><a href="/index/User/order">我的订单</a></div>
+      </div>
+      <div class="fore4">
+        <div class="nav-title">关注中心</div>
+        <div class="nav-content"><a href="/index/User/collect">我的收藏</a></div>
+      </div>
+    </div>
+    <div class="z_content">
+      <h4 class="user-title">我的订单</h4>
+      <div class="order-tab">
+        <table class="table">
+          <tr>
+            <th>账单号</th>
+            <th>总价</th>
+            <th>日期</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+          {volist name='orderData' id='order' }
+          <tr class="order_list">
+            <td id="pid">{$order.pid}</td>
+            <td>{$order.totalprice}</td>
+            <td>{$order.date}</td>
+            <td id="status">{$order.status}</td>
+            <td>
+              <a href="javascript:" class="btn btn-primary" onclick="seInfo('{$order.pid}')">查看详情</a>
+              <a href="javascript:" onclick="deleteInfo('{$order.pid}')" class="btn btn-primary">删除</a>
+            </td>
+          </tr>
+          {/volist}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="common_foot">
+  <p>
+    Copyright © 2020-2021 智付商城 版权所有 保留一切权利
+  </p>
+</div>
+</body>
+
+<script>
+  function search() {
+    let content = document.getElementById("s1");
+    let value = content.value;
+    window.location = '{:url("Commodity/search")}' + '?value=' + value;
+  }
+  
+  function seInfo(id) {
+    window.location = '{:url("User/orderdetails")}' + '?id=' + id;
+  }
+  
+  function deleteInfo(id) {
+    if (confirm("确定要删除该订单吗？")) {
+      window.location = '{:url("User/doorderdelete")}' + '?id=' + id;
+    }
+  }
+
+</script>
+</html>

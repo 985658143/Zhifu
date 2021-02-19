@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8"/>
+  <link rel="icon" type="image/x-icon" href="_IMG_/money.png"/>
+  {css href="_CSS_/login.css"/}
+  {js href="_JS_/jquery.min.js"/}
+  {js href="_JS_/cookie.js"/}
+  {js href="_JS_/code.js"/}
+  <title>欢迎登录 智付商城</title>
+</head>
+<body>
+<a href="/index/user/index"><img class="logo" src="_IMG_/logo.png" alt="logo"></a>
+<h1>欢迎登陆智付商城</h1>
+<form id="loginForm">
+  <table>
+    <tr>
+      <p id="status"></p>
+      <td class="tdx">
+        <label for="name">管理员名：</label></td>
+      <td>
+        <input type="text" id="name" name="name" value=""/>
+      </td>
+    </tr>
+    <tr>
+      <td class="tdx"><label for="password">密&nbsp;&nbsp;&nbsp;码：</label></td>
+      <td>
+        <input type="password" name="password" id="password"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <canvas id="canvas"></canvas>
+      </td>
+      <td>
+        <input type="text" id="a1 " value="" placeholder="请输入验证码（不区分大小写）" class="input-val"/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" class="text-td1">
+        <input type="submit" id="b3" name="submit" value="登陆"/>
+        <input type="button" id="b2" value="注册"/>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" class="text-td2">
+        <input type="button" value="管理员"/>
+        <input type="button" id="b1" value="用户"/>
+      </td>
+    </tr>
+  </table>
+
+</form>
+
+</body>
+<script>
+  let b1 = document.getElementById("b1");
+  b1.onclick = function () {
+    window.location = '/index/Login/userlogin'
+  }
+  let b2 = document.getElementById("b2");
+  b2.onclick = function () {
+    window.location = '/index/User/register'
+  }
+
+</script>
+<script>
+  $(function () {
+    code_draw();
+    // 点击后刷新验证码
+    $("#canvas").on('click', function () {
+      code_draw();
+    })
+    $("#b3").on('click', function () {
+      let admin = document.getElementById("name");
+      let pwd = document.getElementById("password");
+      if (admin.value == '' || pwd.value == '') {
+        alert('输入不能为空！');
+      } else {
+        // 将输入的内容转为大写，可通过这步进行大小写验证
+        let val = $(".input-val").val().toLowerCase();
+        // 获取生成验证码值
+        let num = $('#canvas').attr('data-code');
+        if (val == '') {
+          alert("请输入验证码！");
+        } else if (val == num) {
+          //ajax验证
+          $("#loginForm").submit(function () {
+            console.log('表单被提交了');
+            let formData = new FormData(document.getElementById("loginForm"));
+            $.ajax({
+              url: "/index/Login/doLogin",
+              type: "post",
+              dataType: "json", //text, json, html
+              data: formData,
+              contentType: false,
+              processData: false,
+              beforeSend: function () {
+                $("#status").html('<i class="fa fa-spin fa-spinner"></i>正在登录请稍后')
+              },
+              success: function (response) {
+                $("#status").html(response.msg);
+                if (response.code) {
+                  //登录成功
+                  setTimeout(function () {
+                    window.location.href = "/index/Admin/adminpage"
+                  }, response.wait * 200);
+                } else {
+                  //后端处理有错误
+                  $("#status").html(response.msg);
+                }
+              },
+            });
+            return false; //禁用默认的表单提交跳转
+          });
+        } else {
+          alert("验证码错误！请重新输入！");
+        }
+      }
+    })
+  })
+
+
+</script>
+</html>
